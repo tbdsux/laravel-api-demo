@@ -1,0 +1,35 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "127.0.0.1:8080:8080" # Change depending on the port set in Dockerfile
+    depends_on:
+      - postgres
+    networks:
+      - laravel-api
+    env_file:
+      - .env
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    networks:
+      - laravel-api
+
+volumes:
+  postgres-db:
+
+networks:
+  laravel-api:
+    driver: bridge
